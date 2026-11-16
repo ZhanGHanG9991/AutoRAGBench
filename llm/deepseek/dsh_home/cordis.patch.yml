@@ -1,0 +1,15 @@
+# AutoRAGBench: same model/effort as the Codex agent (deepseek-flash, high), no web tools, no uploads to DeepSeek
+# beyond the model requests themselves.
+- id: agent-default-model
+  config:
+    provider: deepseek-official
+    model: deepseek-flash
+- id: llm-deepseek
+  config:
+    reasoningEffort: high
+- id: session-log-deepseek
+  disabled: true
+- id: session-telemetry-otel
+  disabled: true
+- id: tool-web
+  disabled: true

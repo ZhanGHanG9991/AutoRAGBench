@@ -1,0 +1,50 @@
+{
+  "crag": {
+    "folder": "query_rewriting_retrieval_control/crag",
+    "tasks": [
+      "nq_open",
+      "hotpotqa",
+      "musique",
+      "multihop_rag",
+      "pubmedqa",
+      "qasper",
+      "fever"
+    ],
+    "starting_tasks": []
+  },
+  "adaptive_rag": {
+    "folder": "query_rewriting_retrieval_control/adaptive_rag",
+    "tasks": [
+      "nq_open",
+      "hotpotqa",
+      "musique",
+      "multihop_rag",
+      "pubmedqa",
+      "qasper",
+      "fever"
+    ],
+    "starting_tasks": []
+  },
+  "subgraphrag": {
+    "folder": "kg_subgraph_retrieval/subgraphrag",
+    "tasks": [
+      "webqsp",
+      "cwq"
+    ],
+    "starting_tasks": [
+      "webqsp",
+      "cwq"
+    ]
+  },
+  "lightrag": {
+    "folder": "graph_indexing/lightrag",
+    "tasks": [
+      "multihop_rag",
+      "musique",
+      "pubmedqa"
+    ],
+    "starting_tasks": [
+      "multihop_rag"
+    ]
+  }
+}

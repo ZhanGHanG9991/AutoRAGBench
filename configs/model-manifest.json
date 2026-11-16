@@ -1,0 +1,160 @@
+{
+  "qwen35_4b": {
+    "path": "Qwen3.5-4B",
+    "repo": null,
+    "revision": null,
+    "weight_files": [
+      {
+        "name": "model.safetensors-00001-of-00002.safetensors",
+        "bytes": 5329398688,
+        "sha256": "26a93f066e1916adb13453dae5a0c707c0fbc71299ed98779571a907b8e74c61",
+        "tensor_count": 87
+      },
+      {
+        "name": "model.safetensors-00002-of-00002.safetensors",
+        "bytes": 3990429408,
+        "sha256": "cb544bd9bfae93dc59b0f22b292f5933573854a7f9b97835c67060d7d910e188",
+        "tensor_count": 651
+      }
+    ],
+    "configuration_sha256": {
+      "tokenizer_config.json": "316230d6a809701f4db5ea8f8fc862bc3a6f3229c937c174e674ff3ca0a64ac8",
+      "chat_template.jinja": "a4aee8afcf2e0711942cf848899be66016f8d14a889ff9ede07bca099c28f715",
+      "config.json": "ddc63e1c717afa86c865bb5e01313d89d72bb53b97ad4a8a03ba8510c0621670",
+      "tokenizer.json": "5f9e4d4901a92b997e463c1f46055088b6cca5ca61a6522d1b9f64c4bb81cb42"
+    },
+    "verified_at": "2026-10-22T01:04:35+0800"
+  },
+  "gemma4_e4b": {
+    "path": "gemma-4-E4B-it",
+    "repo": "google/gemma-4-E4B-it",
+    "revision": "ee0ef6023621cff504d758262d4e04895a5af4a2",
+    "weight_files": [
+      {
+        "name": "model.safetensors",
+        "bytes": 15992595884,
+        "sha256": "cfbd3d2f1cd71bd471c37fe2bf8546d5028d41e5736f64e1ca6c6b8893125503",
+        "tensor_count": 2130
+      }
+    ],
+    "configuration_sha256": {
+      "generation_config.json": "d4226bbe3117d2d253ba4609720ba82c6c4ce4627a9a6ae05387c78983ac03de",
+      "tokenizer_config.json": "9f4fec4b1dc6ecddf8f4a92e9caea5971c0e67d81309f3f9066a2bee8c362633",
+      "chat_template.jinja": "0a2c8073c878ab1da004bee933a998606537bbb62016310352c7285c3f01c5b5",
+      "config.json": "33b10c02df3c2e8536cf323d29d53262aaa2f4d11dbe19bc729373fbe90295d4",
+      "tokenizer.json": "cc8d3a0ce36466ccc1278bf987df5f71db1719b9ca6b4118264f45cb627bfe0f"
+    },
+    "verified_at": "2026-10-22T01:04:35+0800"
+  },
+  "gemma3_4b": {
+    "path": "gemma-3-4b-it",
+    "repo": "google/gemma-3-4b-it",
+    "revision": "modelscope-manifest-20261022",
+    "weight_files": [
+      {
+        "name": "model-00001-of-00002.safetensors",
+        "bytes": 4961251752,
+        "sha256": "eb5fd5e97ddd07b56778733e9653c07312529cb00980a318fc3e1c4e3b5a8f1f",
+        "tensor_count": 630
+      },
+      {
+        "name": "model-00002-of-00002.safetensors",
+        "bytes": 3639026128,
+        "sha256": "fdde0e5aa5ced0fa203b3d50f4ab78168b7e3a3e08c6349f5cc9326666e1bb13",
+        "tensor_count": 253
+      }
+    ],
+    "configuration_sha256": {
+      "generation_config.json": "fd9324becc53c4be610db39e13a613006f09fd6ef71a95fb6320dc33157490a3",
+      "special_tokens_map.json": "2f7b0adf4fb469770bb1490e3e35df87b1dc578246c5e7e6fc76ecf33213a397",
+      "tokenizer.model": "1299c11d7cf632ef3b4e11937501358ada021bbdf7c47638d13c0ee982f2e79c",
+      "chat_template.json": "fe16baf728db49457cde32802cd7efc0ac8a7a9877dbe22fe3322b2d9dc6ccd9",
+      "tokenizer_config.json": "bfe25c2735e395407beb78456ea9a6984a1f00d8c16fa04a8b75f2a614cf53e1",
+      "config.json": "9059f680f4dbd1957f35cb44b9fdd6948f4792db7a7a35ee353ea42e68adf7ff",
+      "tokenizer.json": "4667f2089529e8e7657cfb6d1c19910ae71ff5f28aa7ab2ff2763330affad795"
+    },
+    "verified_at": "2026-10-22T01:04:36+0800"
+  },
+  "phi4_mini": {
+    "path": "Phi-4-mini-instruct",
+    "repo": "microsoft/Phi-4-mini-instruct",
+    "revision": "cfbefacb99257ffa30c83adab238a50856ac3083",
+    "weight_files": [
+      {
+        "name": "model-00001-of-00002.safetensors",
+        "bytes": 4903637712,
+        "sha256": "bc703090b63eda16f639fa4de7ac54635c23105ab1da2f6ec4d3403151d38ee6",
+        "tensor_count": 111
+      },
+      {
+        "name": "model-00002-of-00002.safetensors",
+        "bytes": 2768428504,
+        "sha256": "7ff79b9d2d31076bac2663393451f6530f4fc8ca49b09002116c92c373dba983",
+        "tensor_count": 83
+      }
+    ],
+    "configuration_sha256": {
+      "tokenizer_config.json": "9c9b6bc0c94d95f69f826c41069a3e8b387ac3ced89601d201886e99240ac9db",
+      "tokenizer.json": "382cc235b56c725945e149cc25f191da667c836655efd0857b004320e90e91ea",
+      "generation_config.json": "3e3f48753753f92d2b958679151861d4fd7bf26e4dfc41fd47056116c4914dcd",
+      "config.json": "ac65d86061d3d0d704ee2511fd0eb8713ef19eb6eedba17c3080a4165d5b933b",
+      "special_tokens_map.json": "aff38493227d813e29fcf8406e8e90062f1f031aa47d589325e9c31d89ac7cc3"
+    },
+    "verified_at": "2026-10-22T01:04:36+0800"
+  },
+  "smollm3_3b": {
+    "path": "SmolLM3-3B",
+    "repo": "HuggingFaceTB/SmolLM3-3B",
+    "revision": "a07cc9a04f16550a088caea529712d1d335b0ac1",
+    "weight_files": [
+      {
+        "name": "model-00001-of-00002.safetensors",
+        "bytes": 4966315264,
+        "sha256": "e5eed4113a925264c33e3cdf76cd9f547c06a207ef2270914a7274a2bf685ffd",
+        "tensor_count": 258
+      },
+      {
+        "name": "model-00002-of-00002.safetensors",
+        "bytes": 1183919744,
+        "sha256": "6c3ad90646457295723e4da5ee8afac47006e20407b122df5174693dd8d68a43",
+        "tensor_count": 68
+      }
+    ],
+    "configuration_sha256": {
+      "generation_config.json": "3458d62b3f9654f4bbe285223b0f4e5a1e67cae61c92bb6aeaadf04468bf9e01",
+      "special_tokens_map.json": "12403efb970f069ba62ddf3b66166a27254be4a198166b61ad1ee604bd3a4515",
+      "tokenizer_config.json": "59a64b39f05ee0acf7479bbccf99a44d9e481c1a4a494eb03838ae3c35eb29be",
+      "chat_template.jinja": "3e0e275a527f249670056e0078e474eadbdd007c134b4fdfae5a7b3089702814",
+      "config.json": "c72b1031274ff4626e434d0019e88e95a767460135db9ee492eb80652b786af1",
+      "tokenizer.json": "7b6a500b662a34eb3f0374db856ba4ad7de4c81040571d78dc0d357238930005"
+    },
+    "verified_at": "2026-10-22T01:04:36+0800"
+  },
+  "llama32_3b": {
+    "path": "Llama-3.2-3B-Instruct",
+    "repo": null,
+    "revision": null,
+    "weight_files": [
+      {
+        "name": "model-00001-of-00002.safetensors",
+        "bytes": 4965799096,
+        "sha256": "13cbd6d16e927a0c5bad54102514e6e18b4a47b3a6eb911e39d678d328d19f55",
+        "tensor_count": 187
+      },
+      {
+        "name": "model-00002-of-00002.safetensors",
+        "bytes": 1459729952,
+        "sha256": "7b770216613ac5c34d7c54bdff1fa616bc4e338a9d0b20af6303e48c295ee23c",
+        "tensor_count": 67
+      }
+    ],
+    "configuration_sha256": {
+      "generation_config.json": "88effbb63300dbbc7390143fbbdd9d9fa50587b37e8bfd16c8c90d4970a74a36",
+      "special_tokens_map.json": "6f38c73729248f6c127296386e3cdde96e254636cc58b4169d3fd32328d9a8ec",
+      "tokenizer_config.json": "9823dcfdc1121869029da45192238e85cf44f0b232a6d9dc20e4fe6f4242a14e",
+      "config.json": "39fb36dc5416f445ebc4e71cb71fbcf6727e80a35836d8ba1a1474c318467b7a",
+      "tokenizer.json": "79e3e522635f3171300913bb421464a87de6222182a0570b9b2ccba2a964b2b4"
+    },
+    "verified_at": "2026-10-22T01:05:02+0800"
+  }
+}

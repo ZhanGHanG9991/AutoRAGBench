@@ -1,0 +1,72 @@
+{
+  "upstream_url": "https://github.com/DEEP-PolyU/LinearRAG.git",
+  "upstream_commit": "bcc94e66c221f798801255efba09311d6fbcd8d6",
+  "upstream_copy": {
+    "src": "adapter/src"
+  },
+  "service": {
+    "cwq": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/linear_title_wrapper/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/cwq/submission/task.json"
+    },
+    "fever": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/linear_empty_title/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/configs/fever/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/fever/submission/task.json"
+    },
+    "hotpotqa": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/linear_empty_title/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/configs/hotpotqa/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/hotpotqa/submission/task.json"
+    },
+    "multihop_rag": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/linear_title_wrapper/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/multihop_rag/submission/task.json"
+    },
+    "musique": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/linear_title_wrapper/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/musique/submission/task.json"
+    },
+    "pubmedqa": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/linear_empty_title/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/configs/pubmedqa/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/pubmedqa/submission/task.json"
+    },
+    "qasper": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/linear_title_wrapper/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/qasper/submission/task.json"
+    },
+    "webqsp": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/linear_title_wrapper/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/webqsp/submission/task.json"
+    }
+  },
+  "starting_package": {},
+  "build_sources": {
+    "build_formal_v2.py": "build/build_formal_v2.py",
+    "build_formal.py": "build/build_formal.py",
+    "model_revisions.json": "build/model_revisions.json",
+    "environment.lock.txt": "build/environment.lock.txt"
+  }
+}

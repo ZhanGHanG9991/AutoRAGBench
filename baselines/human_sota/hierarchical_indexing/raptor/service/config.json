@@ -1,0 +1,20 @@
+{
+  "upstream_commit": "7da1d48a7e1d7dec61a63c9d9aae84e2dfaa5767",
+  "embedding_model": "sentence-transformers/multi-qa-mpnet-base-cos-v1",
+  "generator": "Qwen3.5-4B",
+  "seed": 224,
+  "gmm_fit_seed": 0,
+  "chunk_tokens": 100,
+  "summary_tokens": 100,
+  "max_layers": 5,
+  "reduction_dimension": 10,
+  "cluster_threshold": 0.1,
+  "cluster_max_tokens": 3500,
+  "retrieval": "collapsed_tree",
+  "context_tokens": 2000,
+  "traversal_top_k": 5,
+  "summary_concurrency": 8,
+  "data_version": "formal-v2",
+  "full_corpus_partitioning": "QASPER per document; other tasks deterministic corpus-order forest with 1024 leaves per tree",
+  "collection_leaf_block_size": 1024
+}

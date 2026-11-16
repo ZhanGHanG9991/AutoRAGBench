@@ -1,0 +1,11 @@
+# Jobs in which an LLM agent or an LLM-driven optimiser runs on the cluster (scripts/unsafe_builds.sh).
+# A job is agentic if its name matches a "name" regex OR its submitted batch script matches a "script" regex.
+# Such a job may coexist with the hidden test on the cluster only if its batch script carries the marker
+# RAGENG_SANDBOXED_BUILD and runs the agent through scripts/sandbox.sh (sandbox_exec) with a fail-closed
+# visibility check. Add lines for every new agentic job type.
+name    ^rageng-build
+name    ^rageng-run
+name    ^rageng-pool-
+name    ^rageng-judge
+script  agents/run_agent\.sh
+script  judges/run_judges\.sh

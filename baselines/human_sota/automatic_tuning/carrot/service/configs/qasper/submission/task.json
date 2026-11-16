@@ -1,0 +1,15 @@
+{
+  "name": "qasper",
+  "display_name": "QASPER",
+  "primary_metric": "f1",
+  "metrics": [
+    "f1"
+  ],
+  "question_type": "information-seeking questions about one NLP research paper; meta.doc_id names the paper",
+  "answer_format": "a concise answer: an extracted span or short phrase; 'Yes' / 'No' for yes-no questions; 'Unanswerable' if the paper does not answer it",
+  "metric_description": "answer token F1 (SQuAD normalisation), max over the annotators' reference answers",
+  "meta": "{\"doc_id\": <doc_id of the paper the question is about>}",
+  "uses_meta_doc_id": true,
+  "multi_hop": false,
+  "evaluation_protocol": "fixed-evidence-v1"
+}

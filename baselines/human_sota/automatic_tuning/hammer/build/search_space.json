@@ -1,0 +1,14 @@
+{
+ "source": "HAMMER technical report Table 9 (github.com/JayLZhou/TechnicalReport RAG_Technical_report.pdf); the official code reads the embedding list from the env var Optional_EMBED_MODEL, empty in the repository",
+ "embedding_models": [
+  "BAAI/bge-m3",
+  "BAAI/bge-large-en-v1.5",
+  "baconnier/Finance2_embedding_small_en-V1.5",
+  "BAAI/bge-base-en-v1.5",
+  "BAAI/bge-small-en-v1.5",
+  "ibm-granite/granite-embedding-125m-english",
+  "intfloat/multilingual-e5-large",
+  "thenlper/gte-large",
+  "thenlper/gte-base"
+ ]
+}

@@ -1,0 +1,32 @@
+{
+ "_note": "formal-v2 (2026-10-21, user decisions): train <= 10000, test <= 1000 (fewer when the source has fewer). Train keeps the official train split's own distribution (no matching to the test mix); MuSiQue without the per-paragraph cap; QASPER train takes every question of the train + validation papers; CWQ draws train from the official RoG train only, test from the official test, and its corpus is the union of the subgraphs of all three splits. MultiHop (user, 2026-10-21): no official split -> test = 500 questions drawn at random stratified by question type (source mix, <= 3 per identical evidence set); train = every other question except those with an evidence-fact set identical to a test question's (~1,680).",
+ "musique": {
+  "TRAIN_MIX": "natural",
+  "TRAIN_CAP": null
+ },
+ "hotpotqa": {
+  "TRAIN_MIX": "natural"
+ },
+ "fever": {
+  "TRAIN_MIX": "natural"
+ },
+ "qasper": {
+  "TRAIN_MIX": "natural",
+  "TRAIN_CAP": null
+ },
+ "cwq": {
+  "TRAIN_SPLITS": [
+   "train"
+  ],
+  "FILE_SPLITS": [
+   "train",
+   "validation",
+   "test"
+  ]
+ },
+ "multihop_rag": {
+  "SPLIT": "random_dedup",
+  "TRAIN_DEDUP": "same_set",
+  "N_TEST": 500
+ }
+}

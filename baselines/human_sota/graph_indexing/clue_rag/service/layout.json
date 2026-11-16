@@ -1,0 +1,26 @@
+{
+  "musique": {
+    "submission/cluerag.json": "submission/cluerag.json",
+    "submission/cluerag_text.py": "submission/cluerag_text.py",
+    "submission/clue_server.py": "configs/musique/submission/clue_server.py",
+    "submission/local_backend.py": "submission/local_backend.py",
+    "submission/start.sh": "configs/musique/submission/start.sh",
+    "submission/task.json": "configs/musique/submission/task.json"
+  },
+  "pubmedqa": {
+    "submission/cluerag.json": "submission/cluerag.json",
+    "submission/cluerag_text.py": "submission/cluerag_text.py",
+    "submission/clue_server.py": "configs/musique/submission/clue_server.py",
+    "submission/local_backend.py": "submission/local_backend.py",
+    "submission/start.sh": "configs/pubmedqa/submission/start.sh",
+    "submission/task.json": "configs/pubmedqa/submission/task.json"
+  },
+  "qasper": {
+    "submission/cluerag.json": "submission/cluerag.json",
+    "submission/cluerag_text.py": "submission/cluerag_text.py",
+    "submission/clue_server.py": "configs/qasper/submission/clue_server.py",
+    "submission/local_backend.py": "submission/local_backend.py",
+    "submission/start.sh": "configs/pubmedqa/submission/start.sh",
+    "submission/task.json": "configs/qasper/submission/task.json"
+  }
+}

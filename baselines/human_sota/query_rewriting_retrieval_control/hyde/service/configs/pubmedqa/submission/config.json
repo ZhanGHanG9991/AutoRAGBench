@@ -1,0 +1,9 @@
+{
+  "n": 8,
+  "top_k": 10,
+  "prompt": "Please write a scientific paper passage to answer the question.\nQuestion: {}\nPassage:",
+  "temperature": 0.7,
+  "hypothesis_max_tokens": 512,
+  "answer_max_tokens": 512,
+  "seed": 20261015
+}

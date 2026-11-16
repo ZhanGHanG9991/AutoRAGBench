@@ -1,0 +1,16 @@
+{
+  "name": "webqsp",
+  "display_name": "WebQSP",
+  "primary_metric": "hits1",
+  "metrics": [
+    "hits1",
+    "f1"
+  ],
+  "question_type": "natural-language questions (from Google search queries) answered by entities of a Freebase knowledge graph, 1-2 relation hops from the topic entity",
+  "answer_format": "exactly one answer: the name of one entity or value as it is written in the knowledge graph (e.g. a person's name, or a date written YYYY-MM-DD), no explanation; if several answers are correct, give any one of them",
+  "metric_description": "Hits@1: exact match (SQuAD normalisation) of your single answer against any of the reference answers",
+  "meta": "{\"topic_entities\": [<names of the question's topic entities, exactly as they appear in the knowledge graph>]}",
+  "uses_meta_doc_id": false,
+  "multi_hop": false,
+  "corpus_note": "The corpus is a **knowledge graph** (a Freebase subgraph): each document is one entity (`title`) and its `text` lists the entity's outgoing triples, one `head | relation | tail` per line. The same graph is in `corpus/triples.tsv` (`head<TAB>relation<TAB>tail`, {{N_TRIPLES}} triples). Entities named `m.…` or `g.…` are unnamed compound-value (CVT) nodes that link several facts."
+}

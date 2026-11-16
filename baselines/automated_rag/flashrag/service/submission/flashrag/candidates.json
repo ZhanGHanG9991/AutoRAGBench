@@ -1,0 +1,22 @@
+{
+  "top_k": 50,
+  "fetch_k": 100,
+  "top_n": 50,
+  "reranker_dirname": "bge-reranker-v2-m3",
+  "e5_dirname": "e5-large-v2",
+  "bge_dirname": "bge-large-en-v1.5",
+  "bm25_backend": "bm25s",
+  "note": "Frozen candidate list. The registration clock time is in SELECTION_RULE.md. Dev does not select. Test is never used. MedCPT is not a FlashRAG candidate.",
+  "candidates": [
+    {"id": "std_bm25", "method": "standard", "retriever": "bm25", "reranker": false, "loop": "standard", "generator_calls": 0, "top_k": 50, "fetch_k": 100, "top_n": 50},
+    {"id": "std_e5", "method": "standard", "retriever": "e5", "reranker": false, "loop": "standard", "generator_calls": 0, "top_k": 50, "fetch_k": 100, "top_n": 50},
+    {"id": "std_bge", "method": "standard", "retriever": "bge", "reranker": false, "loop": "standard", "generator_calls": 0, "top_k": 50, "fetch_k": 100, "top_n": 50},
+    {"id": "std_bm25_rerank", "method": "standard", "retriever": "bm25", "reranker": true, "loop": "standard", "generator_calls": 0, "top_k": 50, "fetch_k": 100, "top_n": 50},
+    {"id": "std_e5_rerank", "method": "standard", "retriever": "e5", "reranker": true, "loop": "standard", "generator_calls": 0, "top_k": 50, "fetch_k": 100, "top_n": 50},
+    {"id": "std_bge_rerank", "method": "standard", "retriever": "bge", "reranker": true, "loop": "standard", "generator_calls": 0, "top_k": 50, "fetch_k": 100, "top_n": 50},
+    {"id": "iter_retgen_bm25_3", "method": "iter_retgen", "retriever": "bm25", "reranker": false, "loop": "iter_retgen", "generator_calls": 2, "top_k": 50, "fetch_k": 100, "top_n": 50},
+    {"id": "ircot_bm25_4", "method": "ircot", "retriever": "bm25", "reranker": false, "loop": "ircot", "generator_calls": 4, "top_k": 50, "fetch_k": 100, "top_n": 50},
+    {"id": "adaptive_single_bm25", "method": "adaptive_single", "retriever": "bm25", "reranker": false, "loop": "adaptive_single", "generator_calls": 0, "top_k": 50, "fetch_k": 100, "top_n": 50},
+    {"id": "adaptive_multi_bm25", "method": "adaptive_multi", "retriever": "bm25", "reranker": false, "loop": "adaptive_multi", "generator_calls": 2, "top_k": 50, "fetch_k": 100, "top_n": 50}
+  ]
+}

@@ -1,0 +1,20 @@
+model = "gpt-6-sol"
+model_provider = "openai-responses"
+forced_login_method = "api"
+model_reasoning_effort = "high"
+model_context_window = 272000
+model_auto_compact_token_limit = 244800
+web_search = "disabled"
+model_catalog_json = "codex_home/models.json"   # rewritten to the per-run copy by agents/run_agent.sh
+
+[model_providers.openai-responses]
+name = "OpenAI"
+base_url = "https://api.openai.com/v1"   # or any Responses-API-compatible endpoint serving gpt-6-sol
+wire_api = "responses"
+env_key = "OPENAI_API_KEY"
+stream_idle_timeout_ms = 360000
+supports_websockets = false
+
+# Codex's goals tool lets the model set itself a token budget that ends the session early; off for all Codex agents and judges
+[features]
+goals = false

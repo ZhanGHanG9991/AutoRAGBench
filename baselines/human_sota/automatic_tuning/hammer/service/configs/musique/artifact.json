@@ -1,0 +1,41 @@
+{
+ "task": "musique",
+ "params": {
+  "rag_mode": "rag",
+  "enforce_full_evaluation": true,
+  "splitter_method": "token",
+  "splitter_chunk_size": 1024,
+  "splitter_overlap": 0.45,
+  "embedding_model": "BAAI/bge-m3",
+  "retrieval_method": "sparse",
+  "retrieval_top_k": 9,
+  "hybrid_bm25_weight": 0.4,
+  "query_decomposition_num_queries": 4,
+  "query_decomposition_llm": "Qwen2-7b",
+  "fusion_mode": "dist_based_score",
+  "reranker_llm": "InRanker",
+  "reranker_top_k": 21,
+  "additional_context_num_nodes": 2,
+  "response_synthesizer_llm": "Qwen2-7b",
+  "template_name": "concise",
+  "rag_embedding_model": "BAAI/bge-m3",
+  "rag_method": "sparse",
+  "rag_top_k": 9,
+  "splitter_chunk_overlap_frac": 0.45,
+  "splitter_chunk_exp": 10,
+  "rag_query_decomposition_enabled": true,
+  "rag_query_decomposition_num_queries": 4,
+  "rag_query_decomposition_llm_name": "Qwen2-7b",
+  "rag_fusion_mode": "dist_based_score",
+  "hyde_enabled": false,
+  "reranker_enabled": true,
+  "reranker_llm_name": "InRanker",
+  "additional_context_enabled": true,
+  "few_shot_enabled": false
+ },
+ "index_files": [
+  "chunks-a6b8f222d51133b80f52.jsonl"
+ ],
+ "trial": 8,
+ "upstream_commit": "679514dc40779ecb4c56d175bef660bd616c62e6"
+}

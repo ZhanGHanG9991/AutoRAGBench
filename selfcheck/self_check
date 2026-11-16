@@ -1,0 +1,110 @@
+#!/bin/bash
+# Self-check for the agent: starts your workspace/submission/start.sh exactly as the official
+# evaluation does (clean env, read-only workspace, metered gateway, one question at a time) and scores it on a
+# labelled question file.
+# Its metered gateway forwards to the build gateway, so all calls stay in the build log.
+# Usage: self_check <questions.jsonl> [max_questions]   (any file in the train.jsonl format; max 0 = all)
+set -uo pipefail
+# needs RAGENG_PORT_BASE (set in the agent's environment); configs/pilot.env is not visible in the sandbox
+source @RAGENG_ROOT@/configs/sandbox/sandbox.env
+[ -n "${RAGENG_PORT_BASE:-}" ] || { echo "self_check: RAGENG_PORT_BASE is not set"; exit 2; }
+TASK=$(cd "$(dirname "$0")" && pwd); RUN=$(dirname "$TASK")
+TASK_NAME=$($RAG_BASE_PY -c "import json;print(json.load(open('$TASK/task.json'))['name'])")
+PROTOCOL=$($RAG_BASE_PY -c "import json; print(json.load(open('$TASK/task.json')).get('evaluation_protocol','answer-v1'))")
+RESPONSE_MODE=answer
+[ "$PROTOCOL" = fixed-evidence-v1 ] && RESPONSE_MODE=evidence
+Q=${1:-$TASK/dev.jsonl}; N=${2:-0}
+[ -f "$Q" ] || { echo "usage: self_check <questions.jsonl> [max_questions]  (a labelled file in the train.jsonl format)"; exit 2; }
+# Leftovers of an earlier self_check that was killed (its gateway still holding the port, or the service it
+# started) are stopped here, so you never need to kill processes yourself. Only orphans are touched: a process is
+# left alone while the self_check that started it is still running. Run one self_check at a time.
+$RAG_BASE_PY - "$RUN/selfcheck/" "$SELFCHECK_GATEWAY_PORT" <<'PY'
+import os, signal, sys, time
+prefix, port = sys.argv[1].encode(), sys.argv[2]
+def read(pid, name):
+    try:
+        return open(f"/proc/{pid}/{name}", "rb").read()
+    except OSError:
+        return b""
+def ppid(pid):
+    s = read(pid, "stat").decode(errors="replace")
+    return int(s.rsplit(")", 1)[1].split()[1]) if ")" in s else 0
+me, p = {os.getpid()}, os.getppid()
+while p > 1 and len(me) < 64:  # this self_check and every process above it (e.g. a wrapper shell)
+    me.add(p)
+    p = ppid(p)
+def is_self_check(pid):  # the bash process running this script itself (not a shell that mentions it)
+    argv = read(pid, "cmdline").split(b"\0")
+    return len(argv) > 1 and argv[0].endswith(b"bash") and argv[1].endswith(b"self_check") and not argv[1].startswith(b"-")
+def started_by_live_self_check(pid):
+    p, seen = ppid(pid), 0
+    while p > 1 and seen < 64:
+        if is_self_check(p):
+            return True
+        p, seen = ppid(p), seen + 1
+    return False
+others = [int(p) for p in os.listdir("/proc") if p.isdigit() and int(p) not in me and is_self_check(int(p))]
+if others:
+    print(f"self_check: another self_check is running (pid {others[0]}); run one at a time")
+    sys.exit(3)
+stale = []
+for p in (int(x) for x in os.listdir("/proc") if x.isdigit()):
+    if p in me:
+        continue
+    cmd = read(p, "cmdline").replace(b"\0", b" ")
+    gateway = b"gateway/gateway.py" in cmd and f"--port {port}".encode() in cmd
+    service = any(e.startswith(b"SCRATCH_DIR=" + prefix) for e in read(p, "environ").split(b"\0"))
+    if (gateway or service) and not started_by_live_self_check(p):
+        stale.append(p)
+for p in stale:
+    try:
+        os.kill(p, signal.SIGKILL)
+    except OSError:
+        pass
+if stale:
+    time.sleep(1)
+    print(f"self_check: stopped {len(stale)} leftover process(es) of an earlier self_check")
+PY
+[ $? -eq 3 ] && exit 3
+OUT=$RUN/selfcheck/$(date +%Y%m%d-%H%M%S); mkdir -p $OUT
+if [ "$N" -gt 0 ]; then head -n "$N" "$Q" > $OUT/questions.jsonl; Q=$OUT/questions.jsonl; fi
+export GATEWAY_ADMIN_TOKEN=selfcheck-$RANDOM$RANDOM
+env -u http_proxy -u https_proxy $VLLM_PY $RAGENG_ROOT/gateway/gateway.py --mode eval --port $SELFCHECK_GATEWAY_PORT \
+  --upstream http://127.0.0.1:$GATEWAY_PORT --log $OUT/gateway.jsonl \
+  --calls $BUDGET_CALLS --tokens $BUDGET_TOKENS --seconds $BUDGET_SECONDS > $OUT/gateway.log 2>&1 &
+GW=$!
+trap 'kill $GW 2>/dev/null' EXIT
+GW_READY=0
+for i in $(seq 30); do
+  kill -0 "$GW" 2>/dev/null || { echo "self_check: own gateway exited before ready (port $SELFCHECK_GATEWAY_PORT)"; tail -10 "$OUT/gateway.log"; exit 3; }
+  if curl -sf -o /dev/null http://127.0.0.1:$SELFCHECK_GATEWAY_PORT/health; then GW_READY=1; break; fi
+  sleep 1
+done
+[ "$GW_READY" = 1 ] || { echo "self_check: gateway readiness timeout"; exit 3; }
+echo "self_check: starting your service (log: $OUT/service.log) with the workspace read-only, as in the official evaluation (write only to \$SCRATCH_DIR) ..."
+$VLLM_PY $RAGENG_ROOT/evaluator.py --response-mode "$RESPONSE_MODE" --workspace $RUN/workspace --questions $Q --out $OUT/predictions.jsonl \
+  --gateway http://127.0.0.1:$SELFCHECK_GATEWAY_PORT --llm-base-url http://127.0.0.1:$SELFCHECK_GATEWAY_PORT/v1 \
+  --corpus-dir $TASK/corpus --scratch-dir $OUT/scratch --service-log $OUT/service.log \
+  --port $((SERVICE_PORT + 1)) --answer-timeout $BUDGET_SECONDS --readonly-workspace > $OUT/evaluator.log 2>&1 || { echo "self_check: evaluator failed"; tail -20 "$OUT/evaluator.log"; exit 3; }
+if [ "$PROTOCOL" = fixed-evidence-v1 ]; then
+  mv "$OUT/predictions.jsonl" "$OUT/evidence.jsonl"
+  $VLLM_PY "$RAGENG_ROOT/selfcheck/fixed_reader.py" --questions "$Q" --evidence "$OUT/evidence.jsonl" \
+    --out "$OUT/predictions.jsonl" --gateway "http://127.0.0.1:$SELFCHECK_GATEWAY_PORT" --task "$TASK_NAME" || { echo "self_check: fixed reader failed"; exit 3; }
+fi
+grep -h "^evaluator: cannot remount" $OUT/evaluator.log | sed 's/^evaluator/self_check/'
+echo "self_check: evaluator summary: $(tail -1 $OUT/evaluator.log)"
+(cd $RAGENG_ROOT && $RAG_BASE_PY -m tasks.score --task $TASK_NAME --pred $OUT/predictions.jsonl --gold $Q \
+  --out $OUT/scores.json) | sed 's/^/self_check: score: /' || { echo "self_check: scoring failed"; exit 3; }
+$RAG_BASE_PY -c "
+import json, sys
+s = json.load(open(sys.argv[1]))
+f = lambda x: '-' if x is None else f'{x:.2f}'
+print(f'self_check: speed: mean {f(s.get(\"latency_mean\"))} s/question (p50 {f(s.get(\"latency_p50\"))}, p95 {f(s.get(\"latency_p95\"))}; '
+      f'measured while your own processes share the GPU)')" $OUT/predictions.jsonl.summary.json 2>/dev/null
+echo "self_check: per-question details in $OUT/predictions.jsonl and $OUT/scores.json"
+# same measure as the freeze (scripts/freeze.py): every regular file under workspace/, apparent size, links not followed
+WS_BYTES=$($RAG_BASE_PY -c "
+import os, sys
+print(sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(sys.argv[1])
+          for f in fs if not os.path.islink(os.path.join(d, f))))" $RUN/workspace)
+echo "self_check: workspace size $((WS_BYTES / 1000000000)) GB of ${WORKSPACE_LIMIT_GB} GB$( [ "$WS_BYTES" -gt $((WORKSPACE_LIMIT_GB * 1000000000)) ] && echo ' — OVER THE LIMIT: a larger workspace at the deadline is not evaluated')"

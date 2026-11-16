@@ -1,0 +1,15 @@
+{
+  "name": "pubmedqa",
+  "display_name": "PubMedQA",
+  "primary_metric": "acc",
+  "metrics": [
+    "acc"
+  ],
+  "question_type": "biomedical research questions answerable from a PubMed abstract",
+  "answer_format": "exactly one word: yes, no or maybe",
+  "metric_description": "accuracy of the yes / no / maybe decision (the first of these words in the answer is taken)",
+  "meta": "always empty",
+  "uses_meta_doc_id": false,
+  "multi_hop": false,
+  "evaluation_protocol": "fixed-evidence-v1"
+}

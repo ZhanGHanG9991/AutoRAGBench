@@ -1,0 +1,43 @@
+{
+ "task": "qasper",
+ "params": {
+  "rag_mode": "rag",
+  "enforce_full_evaluation": true,
+  "splitter_method": "sentence",
+  "splitter_chunk_size": 1024,
+  "splitter_overlap": 0.4,
+  "embedding_model": "BAAI/bge-m3",
+  "retrieval_method": "hybrid",
+  "retrieval_top_k": 6,
+  "hybrid_bm25_weight": 0.1,
+  "query_decomposition_num_queries": 3,
+  "query_decomposition_llm": "Qwen2-7b",
+  "fusion_mode": "reciprocal_rerank",
+  "reranker_llm": "flashrank",
+  "reranker_top_k": 4,
+  "additional_context_num_nodes": 6,
+  "response_synthesizer_llm": "Qwen2-7b",
+  "template_name": "CoT",
+  "rag_embedding_model": "BAAI/bge-m3",
+  "rag_method": "hybrid",
+  "rag_top_k": 6,
+  "splitter_chunk_overlap_frac": 0.4,
+  "splitter_chunk_exp": 10,
+  "rag_hybrid_bm25_weight": 0.1,
+  "rag_query_decomposition_enabled": true,
+  "rag_query_decomposition_num_queries": 3,
+  "rag_query_decomposition_llm_name": "Qwen2-7b",
+  "rag_fusion_mode": "reciprocal_rerank",
+  "hyde_enabled": false,
+  "reranker_enabled": true,
+  "reranker_llm_name": "flashrank",
+  "additional_context_enabled": true,
+  "few_shot_enabled": false
+ },
+ "index_files": [
+  "chunks-f40fdd8123b0f500ecdf.jsonl",
+  "emb-701dd94284a6087e212b.npy"
+ ],
+ "trial": 17,
+ "upstream_commit": "679514dc40779ecb4c56d175bef660bd616c62e6"
+}

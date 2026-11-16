@@ -1,0 +1,37 @@
+# credentials and local configuration
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# data (download separately, see README "Data")
+/data/
+/hidden/
+/benchmarks/
+
+# models, environments, agent CLIs (installed separately, see README "Installation")
+/models/
+/envs/
+/harness/
+/software/
+/cache/
+
+# experiment state: run directories, records, evaluation outputs
+/runs/
+/records/
+/results/
+/experiments/
+
+# logs, caches, editors, OS
+/logs/
+*.log
+__pycache__/
+*.pyc
+.venv/
+venv/
+.ipynb_checkpoints/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

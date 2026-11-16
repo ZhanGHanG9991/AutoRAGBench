@@ -1,0 +1,23 @@
+{
+  "embedding_model": "e5-large-v2",
+  "index_type": "vector_only",
+  "runtime": {
+    "top_k": 50,
+    "hybrid_alpha": 0.0,
+    "bm25_vector_fusion": "alpha",
+    "long_context_reorder": false,
+    "passage_compressor": "none",
+    "reranker": "ms-marco-MiniLM-L-6-v2",
+    "reranker_top_n": 3,
+    "query_expansion": "none",
+    "compressor_llm": null,
+    "expander_llm": null,
+    "generator_llm": "generator",
+    "temperature": 0.0,
+    "reasoning": false,
+    "reasoning_effort": "medium",
+    "llm_timeout_s": 100.0,
+    "graph_query_mode": "hybrid",
+    "graph_top_k": 60
+  }
+}

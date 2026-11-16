@@ -1,0 +1,524 @@
+--- a/agentic_autorag/config/models.py
++++ b/agentic_autorag/config/models.py
+@@ -1202,6 +1202,11 @@
+         for model in self.search_space.all_llm_models():
+             if model.startswith("hosted_vllm/"):
+                 continue  # Auto-managed; vLLM server isn't running at config time
++            alias = self.model_aliases.get(model)
++            if isinstance(alias, dict) and alias.get("api_base"):
++                # A platform endpoint is not probed at load time. The job fills
++                # api_base from LLM_BASE_URL and the gateway may not be up yet.
++                continue
+             if _is_in_litellm_catalog(model):
+                 continue
+             target = self.resolve_alias(model)
+@@ -1725,6 +1730,9 @@
+     # question carries only these. Names filenames (without extension) in the
+     # corpus, like ``BenchmarkQAPair.supporting_doc_ids``.
+     supporting_doc_ids: list[str] = Field(default_factory=list)
++    # Experiment 3 keeps qasper meta.doc_id on the exam object. The index stores
++    # corpus text only. Answers are not copied into the corpus.
++    meta: dict | None = None
+     # Math verification — populated for reasoning_type in {"numeric", "numeric_single"}.
+     # ``formula`` is an arithmetic expression evaluated against
+     # ``canonical_answer``.
+--- a/agentic_autorag/engine/index_builder.py
++++ b/agentic_autorag/engine/index_builder.py
+@@ -688,22 +688,38 @@
+         its source document text, persisted as two int columns so the evaluator
+         can compute deterministic interval-overlap chunk relevance.
+         """
+-        records = [
+-            {
+-                "id": f"chunk_{i}",
+-                "text": chunk,
+-                "vector": embedding.tolist(),
+-                "doc_id": doc_id,
+-                "chunk_index": i,
+-                "char_start": int(char_range[0]),
+-                "char_end": int(char_range[1]),
+-            }
+-            for i, (chunk, embedding, doc_id, char_range) in enumerate(
+-                zip(chunks, embeddings, chunk_doc_ids, char_ranges, strict=True)
+-            )
+-        ]
+-        logger.info("Creating LanceDB vector index (%d records)", len(records))
+-        vector_store = LanceDBStore(db_path=f"memory://{uuid.uuid4()}")
++        lance_dir = os.environ.get("EXP3_LANCE_DIR")
++        lance_root = os.environ.get("EXP3_LANCE_ROOT")
++        if lance_dir:
++            path = lance_dir
++        elif lance_root:
++            path = str(Path(lance_root) / uuid.uuid4().hex)
++        else:
++            path = f"memory://{uuid.uuid4()}"
++        vector_store = LanceDBStore(db_path=path)
++        vector_store.exp3_lance_path = path
++        batch_size = int(os.environ.get("EXP3_LANCE_BATCH", "0") or "0")
++        if batch_size > 0:
++            from exp3lib.batch_embed import iter_lance_record_batches
++
++            records = iter_lance_record_batches(chunks, embeddings, chunk_doc_ids, char_ranges, batch_size)
++            logger.info("Creating LanceDB vector index in batches of %d", batch_size)
++        else:
++            records = [
++                {
++                    "id": f"chunk_{i}",
++                    "text": chunk,
++                    "vector": embedding.tolist(),
++                    "doc_id": doc_id,
++                    "chunk_index": i,
++                    "char_start": int(char_range[0]),
++                    "char_end": int(char_range[1]),
++                }
++                for i, (chunk, embedding, doc_id, char_range) in enumerate(
++                    zip(chunks, embeddings, chunk_doc_ids, char_ranges, strict=True)
++                )
++            ]
++            logger.info("Creating LanceDB vector index (%d records)", len(records))
+         vector_store.create_index(records, table_name=self.table_name, mode="overwrite")
+         return vector_store
+ 
+@@ -716,16 +732,42 @@
+             # agentic_autorag_bench/methods/autorag/native_config.py). The
+             # cross-method comparison in the paper depends on this — a
+             # cuda-conditional dtype would diverge the moment anyone runs on CPU.
+-            self._embedder_cache[model_name] = SentenceTransformer(model_name, model_kwargs={"dtype": torch.float16})
++            custom = None
++            try:
++                from exp3lib.medcpt import maybe_medcpt_embedder
++
++                custom = maybe_medcpt_embedder(model_name, device="cpu" if not torch.cuda.is_available() else "cuda")
++            except ImportError:
++                custom = None
++            if custom is None:
++                custom = SentenceTransformer(
++                    model_name,
++                    model_kwargs={"dtype": torch.float16},
++                    local_files_only=True,
++                )
++            custom.exp3_model_name = model_name
++            self._embedder_cache[model_name] = custom
+         return self._embedder_cache[model_name]
+ 
+     def get_cross_encoder(self, model_name: str) -> CrossEncoder:
+         """Return a cached CrossEncoder, evicting any other cached cross-encoder first."""
+         if model_name not in self._cross_encoder_cache:
+             self._evict_models(self._cross_encoder_cache, {model_name})
+-            model_kwargs = {"dtype": torch.float16} if torch.cuda.is_available() else {}
+-            ce = CrossEncoder(model_name, model_kwargs=model_kwargs)
+-            _ensure_pad_token(ce)
++            custom = None
++            try:
++                from exp3lib.medcpt import maybe_medcpt_cross_encoder
++
++                custom = maybe_medcpt_cross_encoder(
++                    model_name, device="cpu" if not torch.cuda.is_available() else "cuda"
++                )
++            except ImportError:
++                custom = None
++            if custom is None:
++                model_kwargs = {"dtype": torch.float16} if torch.cuda.is_available() else {}
++                ce = CrossEncoder(model_name, model_kwargs=model_kwargs, local_files_only=True)
++                _ensure_pad_token(ce)
++            else:
++                ce = custom
+             self._cross_encoder_cache[model_name] = ce
+         return self._cross_encoder_cache[model_name]
+ 
+@@ -754,10 +796,33 @@
+     API (e.g. text-embedding-3) would meter on the same inputs.
+     """
+     tokens = _count_embedding_tokens(embedder, chunks)
+-    embeddings = np.asarray(
+-        embedder.encode(chunks, show_progress_bar=True, batch_size=EMBED_BATCH_SIZE),
+-        dtype=np.float32,
+-    )
++    to_encode = list(chunks)
++    name = getattr(embedder, "exp3_model_name", "") or ""
++    if name:
++        try:
++            from exp3lib.prefixes import apply_prefix
++
++            has_prompts = bool(getattr(embedder, "prompts", None))
++            to_encode = [apply_prefix(text, name, "passage", has_prompts) for text in chunks]
++        except ImportError:
++            to_encode = list(chunks)
++    if os.environ.get("EXP3_EMBED_MEMMAP") == "1":
++        from exp3lib.batch_embed import encode_to_memmap
++
++        embeddings = np.asarray(
++            encode_to_memmap(
++                embedder,
++                to_encode,
++                os.environ["EXP3_EMBED_MEMMAP_PATH"],
++                batch_size=EMBED_BATCH_SIZE,
++            ),
++            dtype=np.float32,
++        )
++    else:
++        embeddings = np.asarray(
++            embedder.encode(to_encode, show_progress_bar=True, batch_size=EMBED_BATCH_SIZE),
++            dtype=np.float32,
++        )
+     return embeddings, tokens
+ 
+ 
+--- a/agentic_autorag/engine/pipeline.py
++++ b/agentic_autorag/engine/pipeline.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ import asyncio
++import os
+ import concurrent.futures
+ import logging
+ import time
+@@ -226,7 +227,7 @@
+         loop = asyncio.get_running_loop()
+         return await loop.run_in_executor(_model_executor, _timed)
+ 
+-    async def retrieve(self, query: str) -> RetrievalResult:
++    async def retrieve(self, query: str, meta: dict | None = None) -> RetrievalResult:
+         """Retrieve documents using the configured strategy."""
+         t_start = time.monotonic()
+ 
+@@ -236,14 +237,23 @@
+ 
+         reranking = self.config.reranker != "none"
+         fetch_k = self.config.top_k * 3 if reranking else self.config.top_k
++        doc_id = None if not meta else meta.get("doc_id")
++        if doc_id is not None:
++            doc_id = str(doc_id)
+ 
+         t0 = time.monotonic()
+         model_compute_s = 0.0
+         all_docs: list[dict] = []
+         for q in queries:
+-            q_embedding, encode_s = await self._run_model(self.embedder.encode, q, show_progress_bar=False)
++            encode = getattr(self.embedder, "encode_queries", None) or self.embedder.encode
++            q_embedding, encode_s = await self._run_model(
++                encode, self._exp3_prefix(q, "query"), show_progress_bar=False
++            )
++            shape = getattr(q_embedding, "shape", None)
++            if shape is not None and len(shape) == 2 and shape[0] == 1:
++                q_embedding = q_embedding[0]
+             model_compute_s += encode_s
+-            docs = await self._dispatch_search(q, q_embedding, fetch_k)
++            docs = await self._dispatch_search(q, q_embedding, fetch_k, doc_id=doc_id)
+             all_docs.extend(docs)
+         embed_search_s = time.monotonic() - t0
+ 
+@@ -258,6 +268,9 @@
+             final = unique_docs[: self.config.reranker_top_n]
+         else:
+             final = unique_docs[: self.config.top_k]
++
++        if doc_id is not None:
++            final = [doc for doc in final if str(doc.get("doc_id")) == doc_id]
+ 
+         timing = RetrievalTiming(
+             expand_s=expand_s,
+@@ -313,7 +326,17 @@
+         }
+         if self.config.reasoning and apply_reasoning_effort:
+             kwargs["reasoning_effort"] = self.config.reasoning_effort
++        if os.environ.get("EXP3_DISABLE_THINKING") == "1":
++            kwargs["extra_body"] = {"chat_template_kwargs": {"enable_thinking": False}}
++        meter = getattr(self, "call_meter", None)
++        if meter is not None:
++            meter.before_call()
+         response, cost = await acompletion_with_cost(cost_category="rag_eval", **kwargs)
++        if meter is not None:
++            meter.after_call(
++                int(cost.get("prompt_tokens", 0) or 0),
++                int(cost.get("completion_tokens", 0) or 0),
++            )
+         return response.choices[0].message.content, cost
+ 
+     async def prepare_context(
+@@ -427,17 +450,28 @@
+ 
+         return [query], accumulated
+ 
++    def _exp3_prefix(self, text: str, role: str) -> str:
++        try:
++            from exp3lib.prefixes import apply_prefix
++        except ImportError:
++            return text
++        name = getattr(self.embedder, "exp3_model_name", "") or ""
++        has_prompts = bool(getattr(self.embedder, "prompts", None))
++        return apply_prefix(text, name, role, has_prompts)
++
+     async def _dispatch_search(
+         self,
+         query: str,
+         query_embedding: Any,
+         top_k: int,
++        doc_id: str | None = None,
+     ) -> list[dict]:
+         """Route to the correct search backend based on ``self.index_type``."""
+         if self.index_type == IndexType.VECTOR_ONLY:
+             return self.vector_store.search_vector(
+                 query_embedding,
+                 top_k=top_k,
++                doc_id=doc_id,
+             )
+ 
+         if self.index_type == IndexType.HYBRID_BM25_VECTOR:
+@@ -456,6 +490,7 @@
+                 query_embedding,
+                 top_k=top_k,
+                 hybrid_alpha=self.config.hybrid_alpha,
++                doc_id=doc_id,
+             )
+ 
+         if self.index_type == IndexType.GRAPH_ONLY:
+@@ -474,6 +509,7 @@
+                 query_embedding,
+                 top_k=top_k,
+                 hybrid_alpha=self.config.hybrid_alpha,
++                doc_id=doc_id,
+             )
+             graph_docs: list[dict] = []
+             if self.graph_store is not None:
+--- a/agentic_autorag/engine/vector_store.py
++++ b/agentic_autorag/engine/vector_store.py
+@@ -6,6 +6,8 @@
+ from pathlib import Path
+ 
+ import lancedb
++import os
++
+ import numpy as np
+ import pyarrow as pa
+ from lancedb.rerankers import Reranker
+@@ -143,16 +145,58 @@
+         positions those raise ``position is not found but required for phrase
+         queries`` at search time.
+         """
+-        self.table = self.db.create_table(table_name, data=documents, mode=mode)
++        batch_size = int(os.environ.get("EXP3_LANCE_BATCH", "0") or "0")
++        if batch_size > 0 and not isinstance(documents, list):
++            started = False
++            for part in documents:
++                if not part:
++                    continue
++                if not started:
++                    self.table = self.db.create_table(table_name, data=part, mode=mode)
++                    started = True
++                else:
++                    self.table.add(part)
++            if not started:
++                raise ValueError("no records")
++        elif batch_size > 0 and len(documents) > batch_size:
++            self.table = self.db.create_table(table_name, data=documents[:batch_size], mode=mode)
++            start = batch_size
++            while start < len(documents):
++                self.table.add(documents[start : start + batch_size])
++                start += batch_size
++        else:
++            self.table = self.db.create_table(table_name, data=documents, mode=mode)
+         self.table.create_fts_index("text", replace=True, with_position=True)
+ 
+-    def search_vector(self, query_embedding: np.ndarray | Sequence[float], top_k: int = 5) -> list[dict]:
++    def open_table(self, table_name: str = "documents"):
++        """Re-open a table written by a previous job. Does not build an index."""
++        self.table = self.db.open_table(table_name)
++        return self.table
++
++    @staticmethod
++    def _doc_id_where(doc_id: str) -> str:
++        from exp3lib.doc_filter import lance_where
++
++        return lance_where(doc_id)
++
++    def _apply_doc_filter(self, query, doc_id: str | None):
++        if doc_id is None:
++            return query
++        return query.where(self._doc_id_where(doc_id))
++
++    def search_vector(
++        self,
++        query_embedding: np.ndarray | Sequence[float],
++        top_k: int = 5,
++        doc_id: str | None = None,
++    ) -> list[dict]:
+         """Run dense-vector retrieval using a precomputed query embedding."""
+         table = self._require_table()
+         vector = self._normalize_vector(query_embedding)
+-        return table.search(vector).limit(top_k).to_list()
+-
+-    def search_bm25(self, query: str, top_k: int = 5) -> list[dict]:
++        query = table.search(vector).limit(top_k)
++        return self._apply_doc_filter(query, doc_id).to_list()
++
++    def search_bm25(self, query: str, top_k: int = 5, doc_id: str | None = None) -> list[dict]:
+         """Run pure BM25 (full-text) retrieval against the FTS index.
+ 
+         Used by the gate-2 validator baseline — a deliberately weak retrieval
+@@ -160,7 +204,8 @@
+         between RAG configurations.
+         """
+         table = self._require_table()
+-        return table.search(query, query_type="fts").limit(top_k).to_list()
++        built = table.search(query, query_type="fts").limit(top_k)
++        return self._apply_doc_filter(built, doc_id).to_list()
+ 
+     def search_hybrid(
+         self,
+@@ -168,11 +213,13 @@
+         query_embedding: np.ndarray | Sequence[float],
+         top_k: int = 5,
+         hybrid_alpha: float = 0.5,
++        doc_id: str | None = None,
+     ) -> list[dict]:
+         """Run hybrid BM25 + vector retrieval."""
+         vector = self._normalize_vector(query_embedding)
+         reranker = HybridAlphaReranker(alpha=hybrid_alpha, return_score="all")
+-        return self._build_hybrid_query(query, vector).rerank(reranker=reranker).limit(top_k).to_list()
++        built = self._build_hybrid_query(query, vector).rerank(reranker=reranker).limit(top_k)
++        return self._apply_doc_filter(built, doc_id).to_list()
+ 
+     def _require_table(self):
+         if self.table is None:
+--- a/agentic_autorag/examiner/evaluator.py
++++ b/agentic_autorag/examiner/evaluator.py
+@@ -6,6 +6,7 @@
+ from __future__ import annotations
+ 
+ import asyncio
++import os
+ import logging
+ import random
+ import time
+@@ -73,6 +74,7 @@
+     retrieved_chunks: list[str] = []
+     em: float = 0.0
+     f1: float = 0.0
++    bench_metric: float | None = None
+     # LLM cost in USD for this question's generation calls (synthesis + any
+     # query-expansion call). Excludes embedder, reranker (local), and judge.
+     # 0.0 when LiteLLM has no pricing for the model (self-hosted/local).
+@@ -324,7 +326,12 @@
+                 n_judge_failed += 1
+         n_judge_calls = n_judge_correct + n_judge_rejected + n_judge_no_answer + n_judge_failed
+         n_correct = n_em_correct + n_judge_correct
+-        accuracy = n_correct / n_valid if n_valid else 0.0
++        if os.environ.get("EXP3_SELF_CHECK") == "1":
++            measured = [float(item.bench_metric) for item in valid_results if item.bench_metric is not None]
++            accuracy = (sum(measured) / len(measured)) if measured else 0.0
++            n_correct = sum(1 for item in measured if item >= 1.0 - 1e-9)
++        else:
++            accuracy = n_correct / n_valid if n_valid else 0.0
+         mean_em = sum(r.em for r in valid_results) / n_valid if n_valid else 0.0
+         mean_f1 = sum(r.f1 for r in valid_results) / n_valid if n_valid else 0.0
+         mean_rq = sum(r.chunk_precision for r in valid_results) / n_valid if n_valid else 0.0
+@@ -661,8 +668,10 @@
+         try:
+             async with asyncio.timeout(question_timeout):
+                 t0 = time.monotonic()
+-                retrieval_result = await pipeline.retrieve(q.question)
++                retrieval_result = await pipeline.retrieve(q.question, meta=getattr(q, "meta", None))
+                 retrieval_s = time.monotonic() - t0
++                if os.environ.get("EXP3_SELF_CHECK") == "1":
++                    return await self._exp3_self_check_result(pipeline, q, retrieval_result, retrieval_s)
+ 
+                 score = self._score_retrieval(q, retrieval_result)
+                 source_fact_rank = score.source_fact_rank
+@@ -794,6 +803,43 @@
+             )
+ 
+ 
++    async def _exp3_self_check_result(self, pipeline, question, retrieval_result, retrieval_s):
++        """Grade one question the way self_check does, and do not log the number."""
++        from exp3lib.scoring import grade_retrieval, load_task_hooks, qwen_tokenizer
++
++        task = os.environ["EXP3_TASK"]
++        hooks = load_task_hooks(task)
++        graded = await grade_retrieval(
++            pipeline,
++            question,
++            retrieval_result,
++            task=task,
++            score_one=hooks["score_one"],
++            primary_name=hooks["primary_name"],
++            answer_format=hooks["answer_format"],
++            titles=getattr(self, "titles", None) or {},
++            tokenizer=qwen_tokenizer(),
++        )
++        value = float(graded["bench_metric"])
++        answer = graded["answer"]
++        return QuestionResult(
++            question_id=question.id,
++            correct=value >= 1.0 - 1e-9,
++            selected_answer=answer or "INVALID",
++            correct_answer=question.canonical_answer,
++            retrieved_context="\n".join(doc.text for doc in retrieval_result.documents),
++            generated_response=answer,
++            retrieval_s=retrieval_s,
++            model_s=retrieval_result.timing.model_s,
++            retrieved_doc_ids=[str(doc.metadata.get("doc_id", "")) for doc in retrieval_result.documents],
++            retrieved_chunks=[doc.text for doc in retrieval_result.documents],
++            bench_metric=value,
++            f1=value,
++            supporting_doc_ids=list(question.supporting_doc_ids),
++            refused=not bool(answer),
++        )
++
++
+ def _truncate(s: str, n: int) -> str:
+     s = s.strip()
+     return s if len(s) <= n else s[: n - 1] + "…"
+--- a/agentic_autorag/orchestrator.py
++++ b/agentic_autorag/orchestrator.py
+@@ -472,6 +472,10 @@
+         meta = self.config.meta
+         self._log_config_overview()
+ 
++        if self._exp3_is_jsonl():
++            await self._setup_jsonl()
++            return
++
+         # 1. Parse corpus
+         self.logger.info("Loading corpus from %s", meta.corpus_path)
+         t0 = time.monotonic()
+@@ -1559,9 +1563,38 @@
+         files = list(iter_corpus_files(Path(self.config.meta.corpus_path)))
+         return bool(files) and all(f.suffix.lower() in DIRECT_READ_EXTENSIONS for f in files)
+ 
++    def _exp3_is_jsonl(self) -> bool:
++        from exp3lib.jsonl_corpus import is_jsonl_corpus
++
++        return is_jsonl_corpus(self.config.meta.corpus_path)
++
++    async def _setup_jsonl(self) -> None:
++        """Read corpus jsonl and the train tune exam. Docling is not used."""
++        from exp3lib.jsonl_corpus import load_jsonl_corpus
++
++        rows = load_jsonl_corpus(Path(self.config.meta.corpus_path))
++        self._doc_ids = [row["doc_id"] for row in rows]
++        self._documents = [row["text"] for row in rows]
++        self._titles = {row["doc_id"]: row["title"] for row in rows}
++        self.evaluator.documents = dict(zip(self._doc_ids, self._documents, strict=True))
++        self.evaluator.titles = dict(self._titles)
++        self._duplicate_clusters = self._detect_or_load_duplicates(self._documents, self._doc_ids)
++        self.evaluator.duplicate_alias_map = dict(self._duplicate_clusters.alias_to_canonical)
++        custom_exam_path = self.config.examiner.custom_exam_path
++        if custom_exam_path is None:
++            raise RuntimeError("jsonl corpora require examiner.custom_exam_path")
++        self._exam = load_custom_exam(Path(custom_exam_path))
++        self._setup_done = True
++
+     def _corpus_cache_key(self) -> str:
+         """Compute a deterministic cache key for the current corpus + parser."""
+         corpus_path = Path(self.config.meta.corpus_path)
++        if corpus_path.is_file() and corpus_path.suffix == ".jsonl":
++            stat = corpus_path.stat()
++            raw = json.dumps(
++                {"schema": "exp3-jsonl-1", "name": corpus_path.name, "size": stat.st_size, "mtime_ns": stat.st_mtime_ns}
++            )
++            return hashlib.sha256(raw.encode()).hexdigest()[:16]
+         parsing = self.config.parsing
+ 
+         file_signatures: list[tuple[str, int, int]] = []

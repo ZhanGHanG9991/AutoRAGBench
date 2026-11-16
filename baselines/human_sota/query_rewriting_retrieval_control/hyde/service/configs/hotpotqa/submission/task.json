@@ -1,0 +1,16 @@
+{
+  "name": "hotpotqa",
+  "display_name": "HotpotQA",
+  "primary_metric": "f1",
+  "metrics": [
+    "f1",
+    "em"
+  ],
+  "question_type": "2-hop bridge and comparison questions over Wikipedia paragraphs (some answers are yes / no)",
+  "answer_format": "a short answer phrase, or yes / no for comparison questions; no explanation",
+  "metric_description": "answer token F1 (official HotpotQA / SQuAD normalisation)",
+  "meta": "always empty",
+  "uses_meta_doc_id": false,
+  "multi_hop": true,
+  "evaluation_protocol": "fixed-evidence-v1"
+}

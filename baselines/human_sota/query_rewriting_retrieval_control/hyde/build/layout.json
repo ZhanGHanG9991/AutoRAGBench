@@ -1,0 +1,94 @@
+{
+  "upstream_url": "https://github.com/texttron/hyde.git",
+  "upstream_commit": "a2fd8734307612cb0225d71ffbf26e0d225986b8",
+  "upstream_copy": {
+    "src/hyde/hyde.py": "submission/upstream/hyde.py"
+  },
+  "service": {
+    "cwq": {
+      "submission/config.json": "service/configs/cwq/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/cwq/submission/task.json"
+    },
+    "fever": {
+      "submission/config.json": "service/configs/fever/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/fever/submission/task.json"
+    },
+    "hotpotqa": {
+      "submission/config.json": "service/configs/cwq/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/hotpotqa/submission/task.json"
+    },
+    "multihop_rag": {
+      "submission/config.json": "service/configs/multihop_rag/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/multihop_rag/submission/task.json"
+    },
+    "musique": {
+      "submission/config.json": "service/configs/cwq/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/musique/submission/task.json"
+    },
+    "pubmedqa": {
+      "submission/config.json": "service/configs/pubmedqa/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/pubmedqa/submission/task.json"
+    },
+    "qasper": {
+      "submission/config.json": "service/configs/pubmedqa/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/qasper/submission/task.json"
+    },
+    "webqsp": {
+      "submission/config.json": "service/configs/cwq/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/webqsp/submission/task.json"
+    }
+  },
+  "starting_package": {
+    "hotpotqa": {
+      "build.sh": "starting_package/build.sh",
+      "code/rebuild_index.py": "starting_package/code/rebuild_index.py",
+      "runtime_env.sh": "starting_package/runtime_env.sh",
+      "submission/config.json": "service/configs/cwq/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "starting_package/submission/start.sh",
+      "submission/task.json": "service/configs/hotpotqa/submission/task.json"
+    },
+    "pubmedqa": {
+      "build.sh": "starting_package/build.sh",
+      "code/rebuild_index.py": "starting_package/code/rebuild_index.py",
+      "runtime_env.sh": "starting_package/runtime_env.sh",
+      "submission/config.json": "service/configs/pubmedqa/submission/config.json",
+      "submission/encoder.py": "service/submission/encoder.py",
+      "submission/server.py": "service/submission/server.py",
+      "submission/start.sh": "starting_package/submission/start.sh",
+      "submission/task.json": "service/configs/pubmedqa/submission/task.json"
+    }
+  },
+  "build_sources": {
+    "build_index.py": "build/build_index.py",
+    "legacy/build_index.py": "build/legacy/build_index.py",
+    "legacy/encoder.py": "service/submission/encoder.py",
+    "download_model.py": "build/download_model.py",
+    "requirements.lock": "build/requirements.lock"
+  }
+}

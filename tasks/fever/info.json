@@ -1,0 +1,14 @@
+{
+  "name": "fever",
+  "display_name": "FEVER",
+  "primary_metric": "acc",
+  "metrics": [
+    "acc"
+  ],
+  "question_type": "fact verification: the 'question' is a claim to be checked against Wikipedia",
+  "answer_format": "exactly one label: SUPPORTS, REFUTES or NOT ENOUGH INFO",
+  "metric_description": "label accuracy (the first label mentioned in the answer is taken)",
+  "meta": "always empty",
+  "uses_meta_doc_id": false,
+  "multi_hop": false
+}

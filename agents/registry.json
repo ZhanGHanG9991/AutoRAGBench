@@ -1,0 +1,139 @@
+{
+  "_comment": "The nine agent configurations of the paper (Table II): harness (agents/harness/<harness>.sh) and provider template (llm/<provider>/). See docs/agents.md.",
+  "codex-gpt61sol-reprompt": {
+    "harness": "codex",
+    "provider": "openai-gpt61sol",
+    "reprompt": true
+  },
+  "codex-gpt6sol-reprompt": {
+    "harness": "codex",
+    "provider": "openai-gpt6sol",
+    "reprompt": true
+  },
+  "codex-gpt56sol-reprompt": {
+    "harness": "codex",
+    "provider": "openai-gpt56sol",
+    "reprompt": true
+  },
+  "codex-gpt56luna-reprompt": {
+    "harness": "codex",
+    "provider": "openai-gpt56luna",
+    "reprompt": true
+  },
+  "claude-glm53-reprompt": {
+    "harness": "claude_code",
+    "provider": "glm53",
+    "reprompt": true
+  },
+  "claude-glm-reprompt": {
+    "harness": "claude_code",
+    "provider": "glm",
+    "reprompt": true
+  },
+  "dsh-deepseek-reprompt": {
+    "harness": "deepseek_harness",
+    "provider": "deepseek",
+    "reprompt": true
+  },
+  "opencode-gemini38-reprompt": {
+    "harness": "opencode",
+    "provider": "gemini38",
+    "reprompt": true
+  },
+  "claude-qwen38-reprompt": {
+    "harness": "claude_code",
+    "provider": "qwen38",
+    "reprompt": true
+  },
+  "_harnesses": {
+    "codex": {
+      "bin": "harness/codex/bin",
+      "version": "codex --version"
+    },
+    "claude_code": {
+      "bin": "harness/claude-code/bin",
+      "version": "claude --version"
+    },
+    "deepseek_harness": {
+      "bin": "harness/deepseek-harness/bin",
+      "version": "for i in 1 2 3; do dsh --version && exit 0; sleep 3; done; exit 1"
+    },
+    "opencode": {
+      "bin": "harness/opencode/bin",
+      "version": "opencode --version < /dev/null"
+    }
+  },
+  "_providers": {
+    "deepseek": {
+      "keys": [
+        "DEEPSEEK_API_KEY"
+      ],
+      "models_url": "https://api.deepseek.com/models"
+    },
+    "glm": {
+      "keys": [
+        "GLM_API_KEY"
+      ],
+      "models_url": "https://open.bigmodel.cn/api/paas/v4/models"
+    },
+    "glm53": {
+      "keys": [
+        "GLM_API_KEY"
+      ],
+      "models_url": "https://open.bigmodel.cn/api/paas/v4/models"
+    },
+    "openai-gpt61sol": {
+      "keys": [
+        "OPENAI_API_KEY"
+      ],
+      "models_url": "https://api.openai.com/v1/models"
+    },
+    "openai-gpt6sol": {
+      "keys": [
+        "OPENAI_API_KEY"
+      ],
+      "models_url": "https://api.openai.com/v1/models"
+    },
+    "openai-gpt56sol": {
+      "keys": [
+        "OPENAI_API_KEY"
+      ],
+      "models_url": "https://api.openai.com/v1/models"
+    },
+    "openai-gpt56luna": {
+      "keys": [
+        "OPENAI_API_KEY"
+      ],
+      "models_url": "https://api.openai.com/v1/models"
+    },
+    "qwen38": {
+      "keys": [
+        "DASHSCOPE_API_KEY"
+      ],
+      "models_url": "https://dashscope.aliyuncs.com/compatible-mode/v1/models"
+    },
+    "gemini38": {
+      "keys": [
+        "GEMINI_API_KEY",
+        "GEMINI_OPENAI_BASE_URL"
+      ],
+      "models_url": "https://generativelanguage.googleapis.com/v1beta/openai/models"
+    }
+  },
+  "_claude_env": [
+    "ANTHROPIC_BASE_URL",
+    "ANTHROPIC_AUTH_TOKEN",
+    "ANTHROPIC_MODEL",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL",
+    "CLAUDE_CODE_SUBAGENT_MODEL",
+    "CLAUDE_CODE_EFFORT_LEVEL",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW",
+    "API_TIMEOUT_MS",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC",
+    "DISABLE_AUTOUPDATER",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS",
+    "ENABLE_TOOL_SEARCH"
+  ]
+}

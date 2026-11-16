@@ -1,0 +1,15 @@
+{
+  "name": "nq_open",
+  "display_name": "NQ-open",
+  "primary_metric": "em",
+  "metrics": [
+    "em",
+    "f1"
+  ],
+  "question_type": "single-hop open-domain questions from real Google search queries, answered from Wikipedia passages",
+  "answer_format": "a short answer span of at most five words (an entity, date or number), no explanation",
+  "metric_description": "exact match after SQuAD normalisation, against any of the reference answers",
+  "meta": "always empty",
+  "uses_meta_doc_id": false,
+  "multi_hop": false
+}

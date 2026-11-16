@@ -1,0 +1,70 @@
+{
+  "upstream_url": "https://github.com/OSU-NLP-Group/HippoRAG.git",
+  "upstream_commit": "d5c8329422e0a0b834a15874545cb6a74b4f9b26",
+  "upstream_copy": {
+    "src/hipporag": "adapter/hipporag"
+  },
+  "service": {
+    "cwq": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/configs/cwq/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/cwq/submission/task.json"
+    },
+    "multihop_rag": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/multihop_rag/submission/task.json"
+    },
+    "musique": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/musique/submission/task.json"
+    },
+    "pubmedqa": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/configs/cwq/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/pubmedqa/submission/task.json"
+    },
+    "qasper": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/qasper/submission/task.json"
+    },
+    "webqsp": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/webqsp/submission/task.json"
+    }
+  },
+  "starting_package": {
+    "musique": {
+      "adapter/build.py": "starting_package/adapter/build.py",
+      "adapter/provenance.py": "../../_common/fixed_evidence_adapter/starting_provenance.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "starting_package/adapter/server.py",
+      "build.sh": "starting_package/build.sh",
+      "runtime_env.sh": "starting_package/runtime_env.sh",
+      "submission/start.sh": "starting_package/submission/start.sh",
+      "submission/task.json": "starting_package/configs/musique/submission/task.json"
+    }
+  },
+  "build_sources": {
+    "build.py": "starting_package/adapter/build.py",
+    "runtime.py": "service/configs/cwq/adapter/runtime.py",
+    "legacy/build.py": "build/legacy/build.py",
+    "legacy/runtime.py": "build/legacy/runtime.py",
+    "environment.lock.txt": "build/environment.lock.txt"
+  }
+}

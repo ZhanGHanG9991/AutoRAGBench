@@ -1,0 +1,12 @@
+{
+ "_note": "hidden test sizes of formal-v2 (paper Table I); used by scripts/render.py when the hidden store is absent",
+ "nq_open": 1000,
+ "hotpotqa": 1000,
+ "musique": 1000,
+ "multihop_rag": 500,
+ "pubmedqa": 500,
+ "qasper": 1000,
+ "fever": 1000,
+ "webqsp": 1000,
+ "cwq": 1000
+}

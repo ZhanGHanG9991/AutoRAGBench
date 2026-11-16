@@ -1,0 +1,16 @@
+{
+  "musique": {
+    "submission/hammer_rageng.py": "configs/musique/submission/hammer_rageng.py",
+    "submission/hammer_server.py": "configs/musique/submission/hammer_server.py",
+    "submission/start.sh": "configs/musique/submission/start.sh",
+    "submission/task.json": "configs/musique/submission/task.json",
+    "artifact.json": "configs/musique/artifact.json"
+  },
+  "qasper": {
+    "submission/hammer_rageng.py": "configs/qasper/submission/hammer_rageng.py",
+    "submission/hammer_server.py": "configs/qasper/submission/hammer_server.py",
+    "submission/start.sh": "configs/qasper/submission/start.sh",
+    "submission/task.json": "configs/qasper/submission/task.json",
+    "artifact.json": "configs/qasper/artifact.json"
+  }
+}

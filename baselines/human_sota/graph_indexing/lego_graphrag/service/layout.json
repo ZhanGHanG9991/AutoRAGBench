@@ -1,0 +1,26 @@
+{
+  "musique": {
+    "submission/config.py": "submission/config.py",
+    "submission/lego.json": "configs/musique/submission/lego.json",
+    "submission/lego_server.py": "submission/lego_server.py",
+    "submission/lego_text.py": "submission/lego_text.py",
+    "submission/start.sh": "submission/start.sh",
+    "submission/task.json": "configs/musique/submission/task.json"
+  },
+  "pubmedqa": {
+    "submission/config.py": "submission/config.py",
+    "submission/lego.json": "configs/pubmedqa/submission/lego.json",
+    "submission/lego_server.py": "submission/lego_server.py",
+    "submission/lego_text.py": "submission/lego_text.py",
+    "submission/start.sh": "submission/start.sh",
+    "submission/task.json": "configs/pubmedqa/submission/task.json"
+  },
+  "qasper": {
+    "submission/config.py": "submission/config.py",
+    "submission/lego.json": "configs/qasper/submission/lego.json",
+    "submission/lego_server.py": "submission/lego_server.py",
+    "submission/lego_text.py": "submission/lego_text.py",
+    "submission/start.sh": "submission/start.sh",
+    "submission/task.json": "configs/qasper/submission/task.json"
+  }
+}

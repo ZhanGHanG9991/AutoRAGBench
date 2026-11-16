@@ -1,0 +1,16 @@
+{
+  "name": "musique",
+  "display_name": "MuSiQue",
+  "primary_metric": "f1",
+  "metrics": [
+    "f1",
+    "em"
+  ],
+  "question_type": "multi-hop (2-4 hops) factoid questions over Wikipedia paragraphs",
+  "answer_format": "a short answer phrase (an entity, date, number or short phrase), no explanation",
+  "metric_description": "answer token F1 (SQuAD normalisation: lower-case, no punctuation or articles), max over answer aliases",
+  "meta": "always empty",
+  "uses_meta_doc_id": false,
+  "multi_hop": true,
+  "evaluation_protocol": "fixed-evidence-v1"
+}

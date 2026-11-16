@@ -1,0 +1,10 @@
+{
+  "musique": {
+    "submission/start.sh": "submission/start.sh",
+    "submission/task.json": "submission/task.json",
+    "adapter/bookrag_engine_fe.py": "adapter/bookrag_engine_fe.py",
+    "adapter/bookrag_server.py": "adapter/bookrag_server.py",
+    "adapter/engine.py": "adapter/engine.py",
+    "adapter/runtime.py": "adapter/runtime.py"
+  }
+}

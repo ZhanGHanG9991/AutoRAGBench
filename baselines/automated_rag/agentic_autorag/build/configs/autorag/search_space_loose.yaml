@@ -1,0 +1,74 @@
+# Experiment 3 AutoRAG-loose menu for musique, multihop_rag, qasper, pubmedqa
+# (pubmedqa adds MedCPT in search_space_pubmedqa.yaml). hotpotqa and fever use
+# search_space_large.yaml. The non-MedCPT menu is the same list.
+# Placeholders ENV:LLM_BASE_URL and ENV:LLM_API_KEY are filled from the
+# environment at job start. No key is stored here.
+
+meta:
+  project_name: exp3-autorag-loose
+  corpus_path: /tmp/exp3-corpus-placeholder.jsonl
+  corpus_description: "Train corpus jsonl for one text benchmark. Test questions are not in this file."
+  output_dir: /tmp/exp3-autorag-out
+  max_trials: 200
+  cache_max_gb: 40.0
+  cost_aware: false
+  corpus_word_budget: null
+  corpus_sample_seed: 20261027
+
+parsing:
+  parser: docling
+  ocr: false
+  table_structure: false
+  near_duplicate_detection_enabled: false
+
+agent:
+  optimizer_model: deepseek/deepseek-flash
+  examiner_model: deepseek/deepseek-flash
+  judge_model: deepseek/deepseek-flash
+  optimizer_reasoning_effort: high
+  examiner_reasoning_effort: medium
+
+model_aliases:
+  generator:
+    model: openai/generator
+    api_base: "ENV:LLM_BASE_URL"
+    api_key: "ENV:LLM_API_KEY"
+
+examiner:
+  custom_exam_path: null
+  probe_selection: false
+
+search_space:
+  chunking:
+    strategies: ["recursive", "fixed"]
+    chunk_token_size: { values: [128, 256, 384, 512] }
+    chunk_token_overlap: { values: [0, 32, 64] }
+  embedding:
+    models:
+      - "all-MiniLM-L6-v2"
+      - "bge-large-en-v1.5"
+      - "bge-m3"
+      - "e5-large-v2"
+  retrieval:
+    index_types: ["vector_only", "hybrid_bm25_vector"]
+    top_k: { min: 3, max: 50 }
+    hybrid_alpha: { min: 0.0, max: 1.0 }
+    bm25_vector_fusion: ["alpha", "rrf"]
+    long_context_reorder: [false]
+  query_expansion:
+    strategies: ["none", "hyde", "multi_query", "query_decompose"]
+    models: ["generator"]
+  reranker:
+    models:
+      - "none"
+      - "bge-reranker-v2-m3"
+      - "ms-marco-MiniLM-L-6-v2"
+    top_n: { min: 3, max: 50 }
+  passage_compressor:
+    strategies: ["none"]
+    models: []
+  generator:
+    models: ["generator"]
+    reasoning: false
+    reasoning_effort: medium
+  temperature: { min: 0.0, max: 0.0 }

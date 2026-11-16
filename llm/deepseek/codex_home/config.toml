@@ -1,0 +1,19 @@
+# Codex -> DeepSeek (Responses API). Based on api-docs.deepseek.com/quick_start/agent_integrations/codex,
+# but the key is read from env var DEEPSEEK_API_KEY (env_key) instead of being written into this file.
+model = "deepseek-flash"
+model_provider = "deepseek"
+forced_login_method = "api"
+model_reasoning_effort = "high"
+web_search = "disabled"
+show_raw_agent_reasoning = true
+model_catalog_json = "codex_home/models.json"   # rewritten to the per-run copy by run_agent.sh / run_judges.sh
+
+[model_providers.deepseek]
+name = "deepseek"
+base_url = "https://api.deepseek.com/"
+wire_api = "responses"
+env_key = "DEEPSEEK_API_KEY"
+
+# Codex goals tool lets the model set itself a token budget that ends the session early; off for all Codex agents and judges
+[features]
+goals = false

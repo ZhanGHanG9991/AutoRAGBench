@@ -1,0 +1,18 @@
+{
+  "task": "hotpotqa",
+  "build_seconds": 21600,
+  "dense_models": [
+    "e5-large-v2",
+    "bge-large-en-v1.5"
+  ],
+  "reranker": "bge-reranker-v2-m3",
+  "chunk_tokens": 256,
+  "chunk_overlap": 32,
+  "embedding_batch_size": 64,
+  "candidate_file": "service/submission/flashrag/candidates.json",
+  "retrieval_budget": {
+    "calls": 4,
+    "tokens": 32000,
+    "seconds": 60
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "pubmedqa": {
+    "submission/carrot_runtime_fe.py": "submission/carrot_runtime_fe.py",
+    "submission/carrot_server.py": "submission/carrot_server.py",
+    "submission/optimize.py": "submission/optimize.py",
+    "submission/profile_native.py": "submission/profile_native.py",
+    "submission/runtime.py": "submission/runtime.py",
+    "submission/start.sh": "submission/start.sh",
+    "submission/task.json": "configs/pubmedqa/submission/task.json",
+    "artifact.json": "configs/pubmedqa/artifact.json"
+  },
+  "qasper": {
+    "submission/carrot_runtime_fe.py": "submission/carrot_runtime_fe.py",
+    "submission/carrot_server.py": "submission/carrot_server.py",
+    "submission/optimize.py": "submission/optimize.py",
+    "submission/profile_native.py": "submission/profile_native.py",
+    "submission/runtime.py": "submission/runtime.py",
+    "submission/start.sh": "submission/start.sh",
+    "submission/task.json": "configs/qasper/submission/task.json",
+    "artifact.json": "configs/qasper/artifact.json"
+  }
+}

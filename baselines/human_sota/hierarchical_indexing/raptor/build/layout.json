@@ -1,0 +1,95 @@
+{
+  "upstream_url": "https://github.com/parthsarthi03/raptor.git",
+  "upstream_commit": "7da1d48a7e1d7dec61a63c9d9aae84e2dfaa5767",
+  "upstream_copy": {
+    "raptor": "upstream/raptor"
+  },
+  "service": {
+    "cwq": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "config.json": "service/config.json",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/cwq/submission/task.json"
+    },
+    "fever": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "config.json": "service/config.json",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/fever/submission/task.json"
+    },
+    "hotpotqa": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "config.json": "service/config.json",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/hotpotqa/submission/task.json"
+    },
+    "multihop_rag": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "config.json": "service/config.json",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/multihop_rag/submission/task.json"
+    },
+    "musique": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "config.json": "service/config.json",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/musique/submission/task.json"
+    },
+    "pubmedqa": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "config.json": "service/config.json",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/pubmedqa/submission/task.json"
+    },
+    "qasper": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "config.json": "service/config.json",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/qasper/submission/task.json"
+    },
+    "webqsp": {
+      "adapter/fe_corpus.py": "../../_common/fixed_evidence_adapter/fe_corpus.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "service/adapter/server.py",
+      "config.json": "service/config.json",
+      "submission/start.sh": "service/submission/start.sh",
+      "submission/task.json": "service/configs/webqsp/submission/task.json"
+    }
+  },
+  "starting_package": {
+    "qasper": {
+      "adapter/build.py": "starting_package/adapter/build.py",
+      "adapter/provenance.py": "../../_common/fixed_evidence_adapter/starting_provenance.py",
+      "adapter/runtime.py": "service/adapter/runtime.py",
+      "adapter/server.py": "starting_package/adapter/server.py",
+      "build.sh": "starting_package/build.sh",
+      "config.json": "service/config.json",
+      "runtime_env.sh": "starting_package/runtime_env.sh",
+      "submission/start.sh": "starting_package/submission/start.sh",
+      "submission/task.json": "starting_package/configs/qasper/submission/task.json"
+    }
+  },
+  "build_sources": {
+    "build.py": "starting_package/adapter/build.py",
+    "build_collection.py": "build/build_collection.py",
+    "build_collection_sharded.py": "build/build_collection_sharded.py",
+    "requirements.txt": "build/requirements.txt",
+    "environment.lock.txt": "build/environment.lock.txt",
+    "embedding_revision.json": "build/embedding_revision.json",
+    "runtime.py": "service/adapter/runtime.py"
+  }
+}

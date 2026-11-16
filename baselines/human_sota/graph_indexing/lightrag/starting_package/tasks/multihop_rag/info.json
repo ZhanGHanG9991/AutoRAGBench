@@ -1,0 +1,14 @@
+{
+  "name": "multihop_rag",
+  "display_name": "MultiHop-RAG",
+  "primary_metric": "acc",
+  "metrics": [
+    "acc"
+  ],
+  "question_type": "multi-hop questions over one corpus of 609 English news articles, each needing 2-4 articles: inference (which person or organisation ...), comparison and temporal (mostly yes / no), and null questions whose answer the corpus does not contain",
+  "answer_format": "a short answer only: an entity name, or one word such as Yes / No for comparison and temporal questions; exactly \"Insufficient information.\" when the articles do not contain the answer; no explanation",
+  "metric_description": "accuracy: exact match after SQuAD normalisation (case, punctuation, articles) against the reference answer",
+  "meta": "always empty",
+  "uses_meta_doc_id": false,
+  "multi_hop": true
+}

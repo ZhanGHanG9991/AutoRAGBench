@@ -1,0 +1,9 @@
+{
+  "api_usage":   {"field": "disallowed_api_usage",   "effect": "fallback", "votes": 3},
+  "data_lookup": {"field": "disallowed_data_lookup", "effect": "fallback", "votes": 3,
+                  "review_fields": ["disallowed_benchmark_lookup"]},
+  "integrity":   {"field": "integrity_violation",    "effect": "fallback", "votes": 3},
+  "general":     {"field": "general_anomaly",        "effect": "review"},
+  "_provider": "deepseek",
+  "_timeout_seconds": 1800
+}
