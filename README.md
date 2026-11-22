@@ -160,7 +160,7 @@ python examples/minimal_eval.py --task multihop_rag --n 50      # CPU-only BM25 
 ```
 
 ## Citation
-```bash
+```bibtex
 @misc{zhang2026autoragbench,
       title={AutoRAGBench: A Benchmark for LLM Agents Automating RAG System Development},
       author={Hang Zhang and Yuzhi Pan and Ziyao Zhong and Chaokun Wang and Shuo Cao and Zeyu Huang and Yue Xue and Fang Niu and Bofan Xie and Guanchen Ge and Zecheng Li and Leqi Zheng and Ziyang Liu and Wei Wang and Miao Gu},
