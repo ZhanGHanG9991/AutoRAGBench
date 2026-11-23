@@ -161,14 +161,11 @@ python examples/minimal_eval.py --task multihop_rag --n 50      # CPU-only BM25 
 
 ## Citation
 ```bibtex
-@misc{zhang2026autoragbench,
-      title={AutoRAGBench: A Benchmark for LLM Agents Automating RAG System Development},
-      author={Hang Zhang and Yuzhi Pan and Ziyao Zhong and Chaokun Wang and Shuo Cao and Zeyu Huang and Yue Xue and Fang Niu and Bofan Xie and Guanchen Ge and Zecheng Li and Leqi Zheng and Ziyang Liu and Wei Wang and Miao Gu},
-      year={2026},
-      eprint={2611.25582},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/2611.25582},
+@article{zhang2026autoragbench,
+  title={AutoRAGBench: A Benchmark for LLM Agents Automating RAG System Development},
+  author={Zhang, Hang and Pan, Yuzhi and Zhong, Ziyao and Wang, Chaokun and Cao, Shuo and Huang, Zeyu and Xue, Yue and Niu, Fang and Xie, Bofan and Ge, Guanchen and others},
+  journal={arXiv preprint arXiv:2611.25582},
+  year={2026}
 }
 ```
 
